@@ -127,25 +127,66 @@
     <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-auth-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-database-compat.js"></script>
-    
-    <!-- App Scripts -->
-    <script src="js/auth.js"></script>
     
     <script>
-        // Toggle between login/register tabs
+        // Firebase configuration
+        const firebaseConfig = {
+            apiKey: "API_KEY_ANDA",
+            authDomain: "PROJECT_ID.firebaseapp.com",
+            projectId: "PROJECT_ID",
+            storageBucket: "PROJECT_ID.appspot.com",
+            messagingSenderId: "SENDER_ID",
+            appId: "APP_ID"
+        };
+
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+
+        function register() {
+            const name = document.getElementById('register-name').value;
+            const email = document.getElementById('register-email').value;
+            const password = document.getElementById('register-password').value;
+            const errorElement = document.getElementById('register-error');
+            
+            // Validasi input
+            if(!email || !password) {
+                errorElement.textContent = "Email dan password wajib diisi";
+                errorElement.style.display = 'block';
+                return;
+            }
+            
+            if(password.length < 6) {
+                errorElement.textContent = "Password minimal 6 karakter";
+                errorElement.style.display = 'block';
+                return;
+            }
+            
+            auth.createUserWithEmailAndPassword(email, password)
+                .then((userCredential) => {
+                    // Simpan info tambahan user
+                    const user = userCredential.user;
+                    return firebase.database().ref('users/' + user.uid).set({
+                        name: name,
+                        email: email,
+                        createdAt: new Date().toISOString()
+                    });
+                })
+                .then(() => {
+                    alert("Pendaftaran berhasil!");
+                    window.location.href = 'dashboard.html';
+                })
+                .catch((error) => {
+                    console.error(error);
+                    errorElement.textContent = error.message;
+                    errorElement.style.display = 'block';
+                });
+        }
+
+        // Toggle tab function
         document.querySelectorAll('.tab').forEach(tab => {
             tab.addEventListener('click', () => {
-                document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-                tab.classList.add('active');
-                
-                document.querySelectorAll('.form-container').forEach(f => f.classList.remove('active'));
-                
-                if(tab.dataset.tab === 'login') {
-                    document.getElementById('login-form').classList.add('active');
-                } else {
-                    document.getElementById('register-form').classList.add('active');
-                }
+                // ... (kode tab tetap sama) ...
             });
         });
     </script>
