@@ -7,9 +7,12 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="js/auth.js" defer></script>
-    <script src="js/db.js" defer></script>
-    <script src="js/chart.js" defer></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore-compat.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/db.js"></script>
+    <script src="js/chart.js"></script>
     <style>
         * {
             margin: 0;
@@ -391,7 +394,6 @@
     </div>
 
     <script>
-        // Inisialisasi dashboard
         document.addEventListener('DOMContentLoaded', function() {
             const user = JSON.parse(localStorage.getItem('crypto_user'));
             if (!user) {
@@ -399,17 +401,11 @@
                 return;
             }
             
-            // Tampilkan info pengguna
             document.getElementById('user-email').textContent = user.email;
             document.getElementById('user-avatar').textContent = user.email.charAt(0).toUpperCase();
             
-            // Logout button
-            document.getElementById('logout-btn').addEventListener('click', function() {
-                localStorage.removeItem('crypto_user');
-                window.location.href = 'index.html';
-            });
+            document.getElementById('logout-btn').addEventListener('click', logoutUser);
             
-            // Time filter buttons
             document.querySelectorAll('.time-filter').forEach(button => {
                 button.addEventListener('click', function() {
                     document.querySelectorAll('.time-filter').forEach(btn => {
@@ -419,134 +415,20 @@
                 });
             });
             
-            // Simulasi data real-time
-            simulateRealTimeData();
+            initPriceChart();
+            updatePrice();
+            
+            async function updatePrice() {
+                const priceData = await getXAUTPrice();
+                if (priceData) {
+                    document.getElementById('current-price').textContent = `$${priceData.price.toFixed(2)}`;
+                    await savePriceToFirebase(priceData);
+                    updateChartWithNewPrice(priceData.price);
+                    updatePriceHistoryTable();
+                }
+                setTimeout(updatePrice, 60000);
+            }
         });
-        
-        function simulateRealTimeData() {
-            // Harga saat ini
-            const currentPriceElement = document.getElementById('current-price');
-            let currentPrice = 1850.32;
-            
-            setInterval(() => {
-                // Simulasi perubahan harga acak
-                const change = (Math.random() - 0.5) * 10;
-                currentPrice += change;
-                
-                // Format harga
-                currentPriceElement.textContent = `$${currentPrice.toFixed(2)}`;
-                
-                // Update tabel riwayat
-                const now = new Date();
-                const timeString = `${now.getDate()} ${getMonthName(now.getMonth())} ${now.getFullYear()}, ${formatTime(now)}`;
-                
-                const historyTable = document.getElementById('price-history');
-                const newRow = document.createElement('tr');
-                
-                newRow.innerHTML = `
-                    <td>${timeString}</td>
-                    <td>$${currentPrice.toFixed(2)}</td>
-                    <td class="${change >= 0 ? 'price-up' : 'price-down'}">${change >= 0 ? '+' : ''}${change.toFixed(2)}%</td>
-                `;
-                
-                historyTable.insertBefore(newRow, historyTable.firstChild);
-                
-                // Hanya simpan 10 data terbaru
-                if (historyTable.children.length > 10) {
-                    historyTable.removeChild(historyTable.lastChild);
-                }
-                
-            }, 5000); // Update setiap 5 detik
-        }
-        
-        function formatTime(date) {
-            return `${date.getHours().toString().padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}:${date.getSeconds().toString().padStart(2, '0')}`;
-        }
-        
-        function getMonthName(monthIndex) {
-            const months = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Ags', 'Sep', 'Okt', 'Nov', 'Des'];
-            return months[monthIndex];
-        }
-        
-        // Grafik harga (implementasi di chart.js)
-        initPriceChart();
-        
-        function initPriceChart() {
-            const ctx = document.getElementById('price-chart').getContext('2d');
-            
-            // Data dummy untuk grafik
-            const labels = [];
-            const now = new Date();
-            for (let i = 23; i >= 0; i--) {
-                const hour = (now.getHours() - i + 24) % 24;
-                labels.push(`${hour}:00`);
-            }
-            
-            const data = [];
-            let value = 1840;
-            for (let i = 0; i < 24; i++) {
-                value += (Math.random() - 0.5) * 10;
-                data.push(value);
-            }
-            
-            new Chart(ctx, {
-                type: 'line',
-                data: {
-                    labels: labels,
-                    datasets: [{
-                        label: 'Harga XAUT/USDT',
-                        data: data,
-                        borderColor: '#f9a825',
-                        backgroundColor: 'rgba(249, 168, 37, 0.1)',
-                        borderWidth: 3,
-                        pointRadius: 0,
-                        tension: 0.4,
-                        fill: true
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: {
-                            display: false
-                        },
-                        tooltip: {
-                            mode: 'index',
-                            intersect: false
-                        }
-                    },
-                    scales: {
-                        x: {
-                            grid: {
-                                display: false,
-                                drawBorder: false
-                            },
-                            ticks: {
-                                color: '#aaa'
-                            }
-                        },
-                        y: {
-                            grid: {
-                                color: 'rgba(255, 255, 255, 0.1)',
-                                drawBorder: false
-                            },
-                            ticks: {
-                                color: '#aaa',
-                                callback: function(value) {
-                                    return '$' + value;
-                                }
-                            }
-                        }
-                    },
-                    interaction: {
-                        mode: 'nearest',
-                        axis: 'x',
-                        intersect: false
-                    }
-                }
-            });
-        }
     </script>
 </body>
 </html>
