@@ -3,432 +3,225 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Crypto Tracker - Dashboard</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <title>Dashboard - Crypto Tracker</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-auth-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore-compat.js"></script>
-    <script src="js/auth.js"></script>
-    <script src="js/db.js"></script>
-    <script src="js/chart.js"></script>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Poppins', sans-serif;
+        :root {
+            --primary: #4285f4;
+            --positive: #0ecb81;
+            --negative: #f6465d;
+            --dark: #202124;
+            --light: #f8f9fa;
+            --card-bg: #ffffff;
         }
-        
         body {
-            background: linear-gradient(135deg, #1a2a6c, #2c3e50);
-            color: #fff;
-            min-height: 100vh;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            background: var(--light);
+            color: var(--dark);
         }
-        
         header {
-            background: rgba(0, 0, 0, 0.7);
-            padding: 1rem 2rem;
+            background: white;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            padding: 15px 20px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
         }
-        
-        .logo {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            font-size: 1.5rem;
-            font-weight: 700;
-        }
-        
-        .logo i {
-            color: #f9a825;
-        }
-        
-        .user-menu {
-            display: flex;
-            align-items: center;
-            gap: 1.5rem;
-        }
-        
         .user-info {
             display: flex;
             align-items: center;
-            gap: 0.8rem;
+            gap: 15px;
         }
-        
-        .user-avatar {
+        .user-info img {
             width: 40px;
             height: 40px;
             border-radius: 50%;
-            background: linear-gradient(to right, #f9a825, #ffb300);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 700;
+            background: #eee;
         }
-        
-        .btn-logout {
-            background: rgba(255, 255, 255, 0.1);
-            color: #ff6b6b;
-            border: 1px solid #ff6b6b;
-            padding: 0.5rem 1.2rem;
-            border-radius: 30px;
-            font-weight: 500;
+        .logout-btn {
+            background: none;
+            border: none;
+            color: var(--primary);
             cursor: pointer;
-            transition: all 0.3s;
-        }
-        
-        .btn-logout:hover {
-            background: rgba(255, 107, 107, 0.2);
-        }
-        
-        .dashboard {
-            padding: 2rem;
-            max-width: 1400px;
-            margin: 0 auto;
-        }
-        
-        .dashboard-header {
-            margin-bottom: 2rem;
-            text-align: center;
-        }
-        
-        .dashboard-header h1 {
-            font-size: 2.2rem;
-            margin-bottom: 0.5rem;
-            background: linear-gradient(to right, #f9a825, #ffeb3b);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-        
-        .dashboard-header p {
-            color: #bbb;
-            max-width: 600px;
-            margin: 0 auto;
-        }
-        
-        .stats-container {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 1.5rem;
-            margin-bottom: 3rem;
-        }
-        
-        .stat-card {
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
-            border-radius: 15px;
-            padding: 1.5rem;
-            display: flex;
-            flex-direction: column;
-            transition: transform 0.3s;
-        }
-        
-        .stat-card:hover {
-            transform: translateY(-5px);
-            background: rgba(255, 255, 255, 0.15);
-        }
-        
-        .stat-title {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            color: #bbb;
-            margin-bottom: 1rem;
-        }
-        
-        .stat-title i {
-            color: #f9a825;
-        }
-        
-        .stat-value {
-            font-size: 2.2rem;
-            font-weight: 700;
-            margin-bottom: 0.5rem;
-        }
-        
-        .stat-change {
+            font-size: 14px;
             display: flex;
             align-items: center;
             gap: 5px;
-            font-size: 0.9rem;
         }
-        
-        .change-up {
-            color: #4caf50;
+        .container {
+            max-width: 1200px;
+            margin: 20px auto;
+            padding: 0 20px;
         }
-        
-        .change-down {
-            color: #f44336;
+        .card {
+            background: var(--card-bg);
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            padding: 20px;
+            margin-bottom: 20px;
         }
-        
-        .chart-container {
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
-            border-radius: 15px;
-            padding: 2rem;
-            margin-bottom: 3rem;
-        }
-        
-        .chart-header {
+        .price-container {
             display: flex;
-            justify-content: space-between;
             align-items: center;
-            margin-bottom: 1.5rem;
+            gap: 15px;
+            margin: 15px 0;
         }
-        
-        .chart-header h2 {
-            font-size: 1.5rem;
+        .price-display {
+            font-size: 28px;
+            font-weight: bold;
+            color: var(--dark);
         }
-        
-        .time-filters {
-            display: flex;
-            gap: 0.5rem;
-        }
-        
-        .time-filter {
-            background: rgba(255, 255, 255, 0.15);
-            border: none;
-            color: #fff;
-            padding: 0.5rem 1rem;
-            border-radius: 30px;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-        
-        .time-filter.active, .time-filter:hover {
-            background: #f9a825;
-            color: #1a2a6c;
-        }
-        
-        .chart-wrapper {
-            height: 400px;
-            position: relative;
-        }
-        
-        .history-container {
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
-            border-radius: 15px;
-            padding: 2rem;
-        }
-        
-        .history-header {
-            margin-bottom: 1.5rem;
-        }
-        
-        .history-header h2 {
-            font-size: 1.5rem;
-        }
-        
-        .history-table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-        
-        .history-table th, .history-table td {
-            padding: 1rem;
-            text-align: left;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-        }
-        
-        .history-table th {
-            color: #bbb;
+        .price-change {
+            font-size: 16px;
+            padding: 4px 10px;
+            border-radius: 4px;
             font-weight: 500;
         }
-        
-        .price-up {
-            color: #4caf50;
+        .positive {
+            background: rgba(14, 203, 129, 0.1);
+            color: var(--positive);
         }
-        
-        .price-down {
-            color: #f44336;
+        .negative {
+            background: rgba(246, 70, 93, 0.1);
+            color: var(--negative);
         }
-        
-        @media (max-width: 768px) {
-            header {
-                flex-direction: column;
-                gap: 1rem;
-                padding: 1rem;
-            }
-            
-            .user-menu {
-                width: 100%;
-                justify-content: space-between;
-            }
-            
-            .dashboard {
-                padding: 1.5rem;
-            }
-            
-            .chart-wrapper {
-                height: 300px;
-            }
+        .stats-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+        .stat-card {
+            background: rgba(66, 133, 244, 0.05);
+            border-radius: 8px;
+            padding: 15px;
+        }
+        .stat-label {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 5px;
+        }
+        .stat-value {
+            font-size: 18px;
+            font-weight: 600;
+        }
+        .chart-container {
+            height: 400px;
+            margin-top: 20px;
+        }
+        .time-filters {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        .time-filter {
+            background: #f1f3f4;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        .time-filter.active {
+            background: var(--primary);
+            color: white;
+        }
+        .analysis-container {
+            margin-top: 20px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border-left: 4px solid var(--primary);
+        }
+        .analysis-title {
+            font-weight: 600;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .last-updated {
+            color: #777;
+            font-size: 14px;
+            margin-top: 10px;
         }
     </style>
 </head>
 <body>
     <header>
-        <div class="logo">
-            <i class="fas fa-coins"></i>
-            <span>Crypto Tracker</span>
-        </div>
-        
-        <div class="user-menu">
-            <div class="user-info">
-                <div class="user-avatar" id="user-avatar">U</div>
-                <span id="user-email">user@email.com</span>
-            </div>
-            <button class="btn-logout" id="logout-btn">
+        <h1>Crypto Tracker</h1>
+        <div class="user-info">
+            <img id="user-avatar" src="https://via.placeholder.com/40" alt="User">
+            <button class="logout-btn" onclick="logout()">
                 <i class="fas fa-sign-out-alt"></i> Logout
             </button>
         </div>
     </header>
 
-    <div class="dashboard">
-        <div class="dashboard-header">
-            <h1>Dashboard Crypto Tracker</h1>
-            <p>Pantau pergerakan harga XAUT/USDT dari Bitget secara real-time</p>
-        </div>
-        
-        <div class="stats-container">
-            <div class="stat-card">
-                <div class="stat-title">
-                    <i class="fas fa-dollar-sign"></i>
-                    <span>Harga Saat Ini</span>
+    <div class="container">
+        <div class="card">
+            <h2><i class="fas fa-chart-line"></i> Harga XAUTUSDT</h2>
+            
+            <div class="price-container">
+                <div id="price-display" class="price-display">Memuat data...</div>
+                <div id="price-change" class="price-change"></div>
+            </div>
+            
+            <div class="stats-container">
+                <div class="stat-card">
+                    <div class="stat-label">Volume 24 Jam</div>
+                    <div id="volume24h" class="stat-value">-</div>
                 </div>
-                <div class="stat-value" id="current-price">$1,850.32</div>
-                <div class="stat-change change-up">
-                    <i class="fas fa-arrow-up"></i>
-                    <span>+1.24% (24j)</span>
+                <div class="stat-card">
+                    <div class="stat-label">Perubahan 24 Jam</div>
+                    <div id="change24h" class="stat-value">-</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Harga Tertinggi 24h</div>
+                    <div id="high24h" class="stat-value">-</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Harga Terendah 24h</div>
+                    <div id="low24h" class="stat-value">-</div>
                 </div>
             </div>
             
-            <div class="stat-card">
-                <div class="stat-title">
-                    <i class="fas fa-exchange-alt"></i>
-                    <span>Volume 24 Jam</span>
-                </div>
-                <div class="stat-value" id="volume">$42.8M</div>
-                <div class="stat-change change-down">
-                    <i class="fas fa-arrow-down"></i>
-                    <span>-3.15% (24j)</span>
-                </div>
-            </div>
-            
-            <div class="stat-card">
-                <div class="stat-title">
-                    <i class="fas fa-chart-line"></i>
-                    <span>Perubahan 7 Hari</span>
-                </div>
-                <div class="stat-value" id="weekly-change">+5.42%</div>
-                <div class="stat-change change-up">
-                    <i class="fas fa-arrow-up"></i>
-                    <span>Positif minggu ini</span>
-                </div>
-            </div>
+            <div class="last-updated" id="last-updated"></div>
         </div>
-        
-        <div class="chart-container">
-            <div class="chart-header">
-                <h2>Grafik Harga XAUT/USDT</h2>
+
+        <div class="card">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <h2><i class="fas fa-chart-bar"></i> Grafik Harga</h2>
                 <div class="time-filters">
-                    <button class="time-filter active">24J</button>
-                    <button class="time-filter">7H</button>
-                    <button class="time-filter">30H</button>
-                    <button class="time-filter">3B</button>
+                    <button class="time-filter active" data-hours="24">24H</button>
+                    <button class="time-filter" data-hours="72">3D</button>
+                    <button class="time-filter" data-hours="168">7D</button>
+                    <button class="time-filter" data-hours="720">30D</button>
                 </div>
             </div>
-            <div class="chart-wrapper">
+            <div class="chart-container">
                 <canvas id="price-chart"></canvas>
             </div>
-        </div>
-        
-        <div class="history-container">
-            <div class="history-header">
-                <h2>Riwayat Harga</h2>
-            </div>
-            <div class="table-responsive">
-                <table class="history-table">
-                    <thead>
-                        <tr>
-                            <th>Tanggal & Waktu</th>
-                            <th>Harga (USD)</th>
-                            <th>Perubahan</th>
-                        </tr>
-                    </thead>
-                    <tbody id="price-history">
-                        <tr>
-                            <td>01 Okt 2023, 15:30:05</td>
-                            <td>$1,852.14</td>
-                            <td class="price-up">+0.24%</td>
-                        </tr>
-                        <tr>
-                            <td>01 Okt 2023, 15:15:22</td>
-                            <td>$1,850.32</td>
-                            <td class="price-down">-0.15%</td>
-                        </tr>
-                        <tr>
-                            <td>01 Okt 2023, 15:00:18</td>
-                            <td>$1,851.45</td>
-                            <td class="price-up">+0.42%</td>
-                        </tr>
-                        <tr>
-                            <td>01 Okt 2023, 14:45:37</td>
-                            <td>$1,847.82</td>
-                            <td class="price-down">-0.32%</td>
-                        </tr>
-                        <tr>
-                            <td>01 Okt 2023, 14:30:55</td>
-                            <td>$1,850.76</td>
-                            <td class="price-up">+0.18%</td>
-                        </tr>
-                    </tbody>
-                </table>
+            
+            <div class="analysis-container">
+                <div class="analysis-title">
+                    <i class="fas fa-chart-line"></i> Analisis Harga
+                </div>
+                <div id="price-analysis">Menghasilkan analisis...</div>
             </div>
         </div>
     </div>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const user = JSON.parse(localStorage.getItem('crypto_user'));
-            if (!user) {
-                window.location.href = 'login.html';
-                return;
-            }
-            
-            document.getElementById('user-email').textContent = user.email;
-            document.getElementById('user-avatar').textContent = user.email.charAt(0).toUpperCase();
-            
-            document.getElementById('logout-btn').addEventListener('click', logoutUser);
-            
-            document.querySelectorAll('.time-filter').forEach(button => {
-                button.addEventListener('click', function() {
-                    document.querySelectorAll('.time-filter').forEach(btn => {
-                        btn.classList.remove('active');
-                    });
-                    this.classList.add('active');
-                });
-            });
-            
-            initPriceChart();
-            updatePrice();
-            
-            async function updatePrice() {
-                const priceData = await getXAUTPrice();
-                if (priceData) {
-                    document.getElementById('current-price').textContent = `$${priceData.price.toFixed(2)}`;
-                    await savePriceToFirebase(priceData);
-                    updateChartWithNewPrice(priceData.price);
-                    updatePriceHistoryTable();
-                }
-                setTimeout(updatePrice, 60000);
-            }
-        });
-    </script>
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-database-compat.js"></script>
+    
+    <!-- App Scripts -->
+    <script src="js/auth.js"></script>
+    <script src="js/db.js"></script>
+    <script src="js/chart.js"></script>
 </body>
 </html>
