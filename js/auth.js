@@ -10,95 +10,133 @@ const firebaseConfig = {
   measurementId: "G-X85Y9VKG13"
 };
 
-// Inisialisasi Firebase
-firebase.initializeApp(firebaseConfig);
+// Cek apakah Firebase sudah diinisialisasi
+if (!firebase.apps.length) {
+    firebase.initializeApp(firebaseConfig);
+}
+
 const auth = firebase.auth();
 const db = firebase.firestore();
 
-// Fungsi untuk mendaftar pengguna baru
-function registerUser(email, password) {
-    auth.createUserWithEmailAndPassword(email, password)
-        .then((userCredential) => {
-            // Pengguna berhasil didaftarkan
-            const user = userCredential.user;
-            
-            // Simpan data pengguna di Firestore
-            db.collection("users").doc(user.uid).set({
-                email: email,
-                createdAt: firebase.firestore.FieldValue.serverTimestamp()
-            })
-            .then(() => {
-                // Simpan informasi pengguna di localStorage
-                localStorage.setItem('crypto_user', JSON.stringify({
-                    uid: user.uid,
-                    email: email
-                }));
-                
-                // Redirect ke dashboard
-                window.location.href = "dashboard.html";
- })
-        .catch((error) => {
-            console.error("Registration error: ", error);
-            document.getElementById("error-message").textContent = error.message;
+// Fungsi Registrasi yang Diperbaiki
+async function registerUser(email, password) {
+    try {
+        const userCredential = await auth.createUserWithEmailAndPassword(email, password);
+        const user = userCredential.user;
+        
+        // Simpan data tambahan pengguna di Firestore
+        await db.collection("users").doc(user.uid).set({
+            email: email,
+            createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+            lastLogin: firebase.firestore.FieldValue.serverTimestamp()
         });
+        
+        // Simpan informasi pengguna di localStorage
+        localStorage.setItem('crypto_user', JSON.stringify({
+            uid: user.uid,
+            email: email,
+            lastLogin: new Date().toISOString()
+        }));
+        
+        // Redirect ke dashboard
+        window.location.href = "dashboard.html";
+        
+        return { success: true };
+    } catch (error) {
+        console.error("Registration error:", error);
+        
+        // Pesan error yang lebih user-friendly
+        let errorMessage = "Terjadi kesalahan saat pendaftaran";
+        switch(error.code) {
+            case 'auth/email-already-in-use':
+                errorMessage = "Email sudah terdaftar";
+                break;
+            case 'auth/invalid-email':
+                errorMessage = "Format email tidak valid";
+                break;
+            case 'auth/weak-password':
+                errorMessage = "Password terlalu lemah (minimal 6 karakter)";
+                break;
+        }
+        
+        return { success: false, message: errorMessage };
+    }
 }
 
-// Fungsi untuk login pengguna
-function loginUser(email, password) {
-    auth.signInWithEmailAndPassword(email, password)
-        .then((userCredential) => {
-            // Pengguna berhasil login
-            const user = userCredential.user;
-            
-            // Simpan informasi pengguna di localStorage
-            localStorage.setItem('crypto_user', JSON.stringify({
-                uid: user.uid,
-                email: email
-            }));
-            
-            // Redirect ke dashboard
-            window.location.href = "dashboard.html";
-        })
-        .catch((error) => {
-            console.error("Login error: ", error);
-            document.getElementById("error-message").textContent = error.message;
+// Fungsi Login yang Diperbaiki
+async function loginUser(email, password) {
+    try {
+        const userCredential = await auth.signInWithEmailAndPassword(email, password);
+        const user = userCredential.user;
+        
+        // Update last login di Firestore
+        await db.collection("users").doc(user.uid).update({
+            lastLogin: firebase.firestore.FieldValue.serverTimestamp()
         });
+        
+        // Simpan informasi pengguna di localStorage
+        localStorage.setItem('crypto_user', JSON.stringify({
+            uid: user.uid,
+            email: email,
+            lastLogin: new Date().toISOString()
+        }));
+        
+        // Redirect ke dashboard
+        window.location.href = "dashboard.html";
+        
+        return { success: true };
+    } catch (error) {
+        console.error("Login error:", error);
+        
+        // Pesan error yang lebih user-friendly
+        let errorMessage = "Terjadi kesalahan saat login";
+        switch(error.code) {
+            case 'auth/user-not-found':
+                errorMessage = "Email tidak terdaftar";
+                break;
+            case 'auth/wrong-password':
+                errorMessage = "Password salah";
+                break;
+            case 'auth/invalid-email':
+                errorMessage = "Format email tidak valid";
+                break;
+        }
+        
+        return { success: false, message: errorMessage };
+    }
 }
 
-// Fungsi untuk logout
+// Fungsi Logout
 function logoutUser() {
     auth.signOut()
         .then(() => {
-            // Hapus informasi pengguna dari localStorage
             localStorage.removeItem('crypto_user');
-            
-            // Redirect ke halaman utama
             window.location.href = "index.html";
         })
-        .catch((error) => {
-            console.error("Logout error: ", error);
+        .catch(error => {
+            console.error("Logout error:", error);
         });
 }
 
-// Cek status autentikasi saat halaman dimuat
-auth.onAuthStateChanged((user) => {
-    if (user) {
-        // Pengguna sudah login
-        if (window.location.pathname.endsWith("login.html")) {
-            window.location.href = "dashboard.html";
-        }
-    } else {
-        // Pengguna belum login
-        if (window.location.pathname.endsWith("dashboard.html")) {
-            window.location.href = "login.html";
-        }
-    }
-});
+// Cek Status Auth
+function checkAuthState() {
+    return new Promise((resolve) => {
+        auth.onAuthStateChanged(user => {
+            if (user) {
+                resolve({ isLoggedIn: true, user });
+            } else {
+                resolve({ isLoggedIn: false });
+            }
+        });
+    });
+}
 
-// Tambahkan event listener untuk logout button
-document.addEventListener("DOMContentLoaded", function() {
-    const logoutBtn = document.getElementById("logout-btn");
-    if (logoutBtn) {
-        logoutBtn.addEventListener("click", logoutUser);
-    }
-});
+// Export fungsi untuk digunakan di file lain
+export { 
+    registerUser, 
+    loginUser, 
+    logoutUser, 
+    checkAuthState,
+    auth,
+    db 
+};
