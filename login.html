@@ -6,7 +6,10 @@
     <title>Crypto Tracker - Login</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <script src="js/auth.js" defer></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore-compat.js"></script>
+    <script src="js/auth.js"></script>
     <style>
         * {
             margin: 0;
@@ -271,7 +274,6 @@
     </div>
 
     <script>
-        // Toggle antara login dan register
         document.addEventListener('DOMContentLoaded', function() {
             const urlParams = new URLSearchParams(window.location.search);
             const action = urlParams.get('action');
@@ -282,8 +284,8 @@
             const switchText = document.getElementById('switch-text');
             const switchLink = document.getElementById('switch-link');
             const confirmPasswordGroup = document.getElementById('confirm-password-group');
-            const passwordField = document.getElementById('password');
-            
+            const errorMessage = document.getElementById('error-message');
+
             if (action === 'register') {
                 showRegisterForm();
             }
@@ -306,7 +308,6 @@
                 switchText.textContent = 'Sudah punya akun?';
                 switchLink.textContent = 'Masuk';
                 confirmPasswordGroup.style.display = 'block';
-                passwordField.placeholder = 'Minimal 6 karakter';
             }
             
             function showLoginForm() {
@@ -316,10 +317,8 @@
                 switchText.textContent = 'Belum punya akun?';
                 switchLink.textContent = 'Daftar sekarang';
                 confirmPasswordGroup.style.display = 'none';
-                passwordField.placeholder = 'Masukkan password Anda';
             }
             
-            // Handle form submission
             document.getElementById('auth-form').addEventListener('submit', function(e) {
                 e.preventDefault();
                 const email = document.getElementById('email').value;
@@ -332,32 +331,22 @@
                         errorMessage.textContent = 'Password dan konfirmasi password tidak cocok!';
                         return;
                     }
-                    registerUser(email, password);
+                    registerUser(email, password)
+                        .then(result => {
+                            if (!result.success) {
+                                errorMessage.textContent = result.message;
+                            }
+                        });
                 } else {
-                    loginUser(email, password);
+                    loginUser(email, password)
+                        .then(result => {
+                            if (!result.success) {
+                                errorMessage.textContent = result.message;
+                            }
+                        });
                 }
             });
         });
-        
-        function loginUser(email, password) {
-            // Implementasi di auth.js
-            console.log(`Login attempt with email: ${email}`);
-            // Simulasi login berhasil
-            setTimeout(() => {
-                localStorage.setItem('crypto_user', JSON.stringify({email: email}));
-                window.location.href = 'dashboard.html';
-            }, 1000);
-        }
-        
-        function registerUser(email, password) {
-            // Implementasi di auth.js
-            console.log(`Register attempt with email: ${email}`);
-            // Simulasi registrasi berhasil
-            setTimeout(() => {
-                localStorage.setItem('crypto_user', JSON.stringify({email: email}));
-                window.location.href = 'dashboard.html';
-            }, 1000);
-        }
     </script>
 </body>
 </html>
