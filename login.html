@@ -3,192 +3,361 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - Crypto Tracker</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <title>Crypto Tracker - Login</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="js/auth.js" defer></script>
     <style>
-        :root {
-            --primary: #4285f4;
-            --error: #ea4335;
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
         }
+        
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: #f5f8fa;
+            background: linear-gradient(135deg, #1a2a6c, #2c3e50);
+            color: #fff;
+            min-height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100vh;
-            margin: 0;
+            padding: 2rem;
         }
+        
         .container {
-            background: white;
-            border-radius: 10px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-            width: 350px;
-            padding: 30px;
-        }
-        .tabs {
             display: flex;
-            margin-bottom: 20px;
+            max-width: 1000px;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
         }
-        .tab {
+        
+        .login-image {
             flex: 1;
+            background: linear-gradient(rgba(26, 42, 108, 0.7), rgba(44, 62, 80, 0.7)), 
+                        url('https://images.unsplash.com/photo-1620336655052-b57986f5a26a?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80');
+            background-size: cover;
+            background-position: center;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 3rem;
+            gap: 1.5rem;
+        }
+        
+        .login-image h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+        }
+        
+        .login-image p {
+            font-size: 1.1rem;
+            line-height: 1.6;
+            color: #e0e0e0;
+        }
+        
+        .feature-list {
+            margin-top: 1rem;
+        }
+        
+        .feature-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 1rem;
+        }
+        
+        .feature-item i {
+            color: #f9a825;
+            font-size: 1.2rem;
+        }
+        
+        .login-form {
+            flex: 1;
+            padding: 3rem;
+            background: rgba(30, 40, 80, 0.8);
+        }
+        
+        .form-header {
             text-align: center;
-            padding: 10px;
-            cursor: pointer;
-            border-bottom: 2px solid #ddd;
+            margin-bottom: 2.5rem;
         }
-        .tab.active {
-            border-bottom: 2px solid var(--primary);
-            color: var(--primary);
-            font-weight: bold;
+        
+        .form-header h2 {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(to right, #f9a825, #ffeb3b);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
-        .form-container {
-            display: none;
+        
+        .form-header p {
+            color: #bbb;
         }
-        .form-container.active {
+        
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        
+        .form-group label {
             display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
         }
-        .input-group {
-            margin-bottom: 15px;
+        
+        .input-with-icon {
             position: relative;
         }
-        .input-group i {
+        
+        .input-with-icon i {
             position: absolute;
-            left: 10px;
-            top: 12px;
-            color: #777;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #888;
         }
-        input {
+        
+        .form-control {
             width: 100%;
-            padding: 10px 10px 10px 35px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            font-size: 16px;
+            padding: 14px 20px 14px 45px;
+            border-radius: 30px;
+            border: 2px solid #444;
+            background: rgba(255, 255, 255, 0.08);
+            color: #fff;
+            font-size: 1rem;
+            transition: all 0.3s;
         }
-        button {
+        
+        .form-control:focus {
+            outline: none;
+            border-color: #f9a825;
+            background: rgba(255, 255, 255, 0.12);
+        }
+        
+        .btn {
             width: 100%;
-            padding: 12px;
-            background: var(--primary);
-            color: white;
-            border: none;
-            border-radius: 5px;
-            font-size: 16px;
+            padding: 14px;
+            border-radius: 30px;
+            font-weight: 600;
+            font-size: 1.1rem;
             cursor: pointer;
-            margin-top: 10px;
+            transition: all 0.3s;
+            border: none;
+            margin-top: 1rem;
         }
-        .error {
-            color: var(--error);
-            font-size: 14px;
-            margin-top: 5px;
-            display: none;
+        
+        .btn-primary {
+            background: linear-gradient(to right, #f9a825, #ffb300);
+            color: #1a2a6c;
+        }
+        
+        .btn-primary:hover {
+            background: linear-gradient(to right, #ffb300, #ffc107);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(249, 168, 37, 0.4);
+        }
+        
+        .switch-form {
+            text-align: center;
+            margin-top: 1.5rem;
+            color: #aaa;
+        }
+        
+        .switch-form a {
+            color: #f9a825;
+            text-decoration: none;
+            font-weight: 500;
+            margin-left: 5px;
+        }
+        
+        .switch-form a:hover {
+            text-decoration: underline;
+        }
+        
+        .error-message {
+            color: #ff6b6b;
+            text-align: center;
+            margin-top: 1rem;
+            font-size: 0.9rem;
+            min-height: 20px;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                flex-direction: column;
+            }
+            
+            .login-image {
+                padding: 2rem;
+            }
+            
+            .login-form {
+                padding: 2rem;
+            }
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <div class="tabs">
-            <div class="tab active" data-tab="login">Login</div>
-            <div class="tab" data-tab="register">Daftar</div>
+        <div class="login-image">
+            <h1>Kelola Investasi Kripto Anda</h1>
+            <p>Dengan Crypto Tracker, Anda dapat memantau pergerakan harga aset kripto favorit Anda secara real-time.</p>
+            
+            <div class="feature-list">
+                <div class="feature-item">
+                    <i class="fas fa-sync-alt"></i>
+                    <span>Update harga real-time setiap menit</span>
+                </div>
+                <div class="feature-item">
+                    <i class="fas fa-lock"></i>
+                    <span>Keamanan data dengan Firebase Authentication</span>
+                </div>
+                <div class="feature-item">
+                    <i class="fas fa-chart-line"></i>
+                    <span>Grafik interaktif untuk analisis mendalam</span>
+                </div>
+                <div class="feature-item">
+                    <i class="fas fa-history"></i>
+                    <span>Riwayat harga yang disimpan secara otomatis</span>
+                </div>
+            </div>
         </div>
-
-        <!-- Form Login -->
-        <div id="login-form" class="form-container active">
-            <div class="input-group">
-                <i class="fas fa-envelope"></i>
-                <input type="email" id="login-email" placeholder="Email">
+        
+        <div class="login-form">
+            <div class="form-header">
+                <h2 id="form-title">Masuk ke Akun Anda</h2>
+                <p id="form-subtitle">Masukkan kredensial Anda untuk mengakses dashboard</p>
             </div>
-            <div class="input-group">
-                <i class="fas fa-lock"></i>
-                <input type="password" id="login-password" placeholder="Password">
+            
+            <form id="auth-form">
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <div class="input-with-icon">
+                        <i class="fas fa-envelope"></i>
+                        <input type="email" id="email" class="form-control" placeholder="email@contoh.com" required>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <div class="input-with-icon">
+                        <i class="fas fa-lock"></i>
+                        <input type="password" id="password" class="form-control" placeholder="Minimal 6 karakter" required minlength="6">
+                    </div>
+                </div>
+                
+                <div id="confirm-password-group" class="form-group" style="display: none;">
+                    <label for="confirm-password">Konfirmasi Password</label>
+                    <div class="input-with-icon">
+                        <i class="fas fa-lock"></i>
+                        <input type="password" id="confirm-password" class="form-control" placeholder="Konfirmasi password Anda">
+                    </div>
+                </div>
+                
+                <div class="error-message" id="error-message"></div>
+                
+                <button type="submit" class="btn btn-primary" id="submit-btn">Masuk</button>
+            </form>
+            
+            <div class="switch-form">
+                <span id="switch-text">Belum punya akun?</span>
+                <a href="#" id="switch-link">Daftar sekarang</a>
             </div>
-            <div id="login-error" class="error"></div>
-            <button onclick="login()">Masuk</button>
-        </div>
-
-        <!-- Form Register -->
-        <div id="register-form" class="form-container">
-            <div class="input-group">
-                <i class="fas fa-user"></i>
-                <input type="text" id="register-name" placeholder="Nama Lengkap">
-            </div>
-            <div class="input-group">
-                <i class="fas fa-envelope"></i>
-                <input type="email" id="register-email" placeholder="Email">
-            </div>
-            <div class="input-group">
-                <i class="fas fa-lock"></i>
-                <input type="password" id="register-password" placeholder="Password (min. 6 karakter)">
-            </div>
-            <div id="register-error" class="error"></div>
-            <button onclick="register()">Daftar</button>
         </div>
     </div>
 
-    <!-- Firebase SDK -->
-    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-auth-compat.js"></script>
-    
     <script>
-        // Firebase configuration
-        const firebaseConfig = {
-            apiKey: "API_KEY_ANDA",
-            authDomain: "PROJECT_ID.firebaseapp.com",
-            projectId: "PROJECT_ID",
-            storageBucket: "PROJECT_ID.appspot.com",
-            messagingSenderId: "SENDER_ID",
-            appId: "APP_ID"
-        };
-
-        // Initialize Firebase
-        firebase.initializeApp(firebaseConfig);
-        const auth = firebase.auth();
-
-        function register() {
-            const name = document.getElementById('register-name').value;
-            const email = document.getElementById('register-email').value;
-            const password = document.getElementById('register-password').value;
-            const errorElement = document.getElementById('register-error');
+        // Toggle antara login dan register
+        document.addEventListener('DOMContentLoaded', function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const action = urlParams.get('action');
             
-            // Validasi input
-            if(!email || !password) {
-                errorElement.textContent = "Email dan password wajib diisi";
-                errorElement.style.display = 'block';
-                return;
+            const formTitle = document.getElementById('form-title');
+            const formSubtitle = document.getElementById('form-subtitle');
+            const submitBtn = document.getElementById('submit-btn');
+            const switchText = document.getElementById('switch-text');
+            const switchLink = document.getElementById('switch-link');
+            const confirmPasswordGroup = document.getElementById('confirm-password-group');
+            const passwordField = document.getElementById('password');
+            
+            if (action === 'register') {
+                showRegisterForm();
             }
             
-            if(password.length < 6) {
-                errorElement.textContent = "Password minimal 6 karakter";
-                errorElement.style.display = 'block';
-                return;
+            switchLink.addEventListener('click', function(e) {
+                e.preventDefault();
+                if (submitBtn.textContent === 'Masuk') {
+                    showRegisterForm();
+                    window.history.replaceState(null, null, '?action=register');
+                } else {
+                    showLoginForm();
+                    window.history.replaceState(null, null, 'login.html');
+                }
+            });
+            
+            function showRegisterForm() {
+                formTitle.textContent = 'Buat Akun Baru';
+                formSubtitle.textContent = 'Daftar untuk mulai menggunakan Crypto Tracker';
+                submitBtn.textContent = 'Daftar';
+                switchText.textContent = 'Sudah punya akun?';
+                switchLink.textContent = 'Masuk';
+                confirmPasswordGroup.style.display = 'block';
+                passwordField.placeholder = 'Minimal 6 karakter';
             }
             
-            auth.createUserWithEmailAndPassword(email, password)
-                .then((userCredential) => {
-                    // Simpan info tambahan user
-                    const user = userCredential.user;
-                    return firebase.database().ref('users/' + user.uid).set({
-                        name: name,
-                        email: email,
-                        createdAt: new Date().toISOString()
-                    });
-                })
-                .then(() => {
-                    alert("Pendaftaran berhasil!");
-                    window.location.href = 'dashboard.html';
-                })
-                .catch((error) => {
-                    console.error(error);
-                    errorElement.textContent = error.message;
-                    errorElement.style.display = 'block';
-                });
-        }
-
-        // Toggle tab function
-        document.querySelectorAll('.tab').forEach(tab => {
-            tab.addEventListener('click', () => {
-                // ... (kode tab tetap sama) ...
+            function showLoginForm() {
+                formTitle.textContent = 'Masuk ke Akun Anda';
+                formSubtitle.textContent = 'Masukkan kredensial Anda untuk mengakses dashboard';
+                submitBtn.textContent = 'Masuk';
+                switchText.textContent = 'Belum punya akun?';
+                switchLink.textContent = 'Daftar sekarang';
+                confirmPasswordGroup.style.display = 'none';
+                passwordField.placeholder = 'Masukkan password Anda';
+            }
+            
+            // Handle form submission
+            document.getElementById('auth-form').addEventListener('submit', function(e) {
+                e.preventDefault();
+                const email = document.getElementById('email').value;
+                const password = document.getElementById('password').value;
+                const confirmPassword = document.getElementById('confirm-password')?.value;
+                const errorMessage = document.getElementById('error-message');
+                
+                if (submitBtn.textContent === 'Daftar') {
+                    if (password !== confirmPassword) {
+                        errorMessage.textContent = 'Password dan konfirmasi password tidak cocok!';
+                        return;
+                    }
+                    registerUser(email, password);
+                } else {
+                    loginUser(email, password);
+                }
             });
         });
+        
+        function loginUser(email, password) {
+            // Implementasi di auth.js
+            console.log(`Login attempt with email: ${email}`);
+            // Simulasi login berhasil
+            setTimeout(() => {
+                localStorage.setItem('crypto_user', JSON.stringify({email: email}));
+                window.location.href = 'dashboard.html';
+            }, 1000);
+        }
+        
+        function registerUser(email, password) {
+            // Implementasi di auth.js
+            console.log(`Register attempt with email: ${email}`);
+            // Simulasi registrasi berhasil
+            setTimeout(() => {
+                localStorage.setItem('crypto_user', JSON.stringify({email: email}));
+                window.location.href = 'dashboard.html';
+            }, 1000);
+        }
     </script>
 </body>
 </html>
