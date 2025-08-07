@@ -290,3 +290,34 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 });
+// Tambahkan di akhir db.js
+async function testFirebaseConnection() {
+  try {
+    const testRef = database.ref('connection_test');
+    await testRef.set({
+      timestamp: Date.now(),
+      message: "Test connection from dashboard"
+    });
+    console.log("Firebase connection test successful");
+    return true;
+  } catch (error) {
+    console.error("Firebase connection test failed:", error);
+    showNotification("Error: Koneksi Firebase gagal", true);
+    return false;
+  }
+}
+
+// Panggil di DOMContentLoaded
+document.addEventListener('DOMContentLoaded', () => {
+  if (window.location.pathname.endsWith('dashboard.html')) {
+    // ... kode sebelumnya
+    
+    // Test koneksi Firebase
+    testFirebaseConnection().then(success => {
+      if (success) {
+        // Mulai pembaruan harga
+        const updateInterval = startPriceUpdates();
+      }
+    });
+  }
+});
