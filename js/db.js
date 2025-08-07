@@ -16,7 +16,7 @@ const database = firebase.database();
 
 // Fungsi untuk mengambil data harga dari Bitget
 async function fetchBitgetPrice() {
-    const BITGET_API_KEY = 'YOUR_BITGET_API_KEY';
+    const BITGET_API_KEY = 'bg_1f934704f495ec2d66b6b8ed04359dcc';
     const symbol = 'XAUTUSDT_SPBL'; // Format yang benar untuk spot market
     
     try {
