@@ -36,12 +36,7 @@ function registerUser(email, password) {
                 
                 // Redirect ke dashboard
                 window.location.href = "dashboard.html";
-            })
-            .catch((error) => {
-                console.error("Error saving user data: ", error);
-                document.getElementById("error-message").textContent = "Gagal menyimpan data pengguna: " + error.message;
-            });
-        })
+ })
         .catch((error) => {
             console.error("Registration error: ", error);
             document.getElementById("error-message").textContent = error.message;
