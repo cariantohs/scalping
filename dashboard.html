@@ -9,6 +9,10 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <!-- Chart.js Financial for candlestick -->
     <script src="https://cdn.jsdelivr.net/npm/chartjs-chart-financial@1.0.0"></script>
+    <!-- Luxon for date handling -->
+    <script src="https://cdn.jsdelivr.net/npm/luxon@2.0.2/build/global/luxon.min.js"></script>
+    <!-- Chart.js adapter for Luxon -->
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-luxon@1.0.0"></script>
 </head>
 <body>
     <header>
@@ -21,7 +25,7 @@
     
     <div class="container">
         <div class="dashboard-header">
-            <h1>XAUT-USDT Tracker</h1>
+            <h1>XAUT/USDT Tracker</h1>
             <div class="price-info">
                 <div class="price" id="current-price">Loading...</div>
                 <div class="change" id="price-change">0.00%</div>
