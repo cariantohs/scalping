@@ -3,286 +3,117 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Crypto Tracker - Home</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Poppins', sans-serif;
-        }
-        
-        body {
-            background: linear-gradient(135deg, #1a2a6c, #2c3e50);
-            color: #fff;
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-        }
-        
-        header {
-            background: rgba(0, 0, 0, 0.7);
-            padding: 1.5rem 2rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-        }
-        
-        .logo {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            font-size: 1.8rem;
-            font-weight: 700;
-        }
-        
-        .logo i {
-            color: #f9a825;
-        }
-        
-        nav ul {
-            display: flex;
-            list-style: none;
-            gap: 2rem;
-        }
-        
-        nav a {
-            color: #fff;
-            text-decoration: none;
-            font-weight: 500;
-            transition: color 0.3s;
-            position: relative;
-            padding: 5px 0;
-        }
-        
-        nav a:hover {
-            color: #f9a825;
-        }
-        
-        nav a::after {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 0;
-            height: 2px;
-            background: #f9a825;
-            transition: width 0.3s;
-        }
-        
-        nav a:hover::after {
-            width: 100%;
-        }
-        
-        .auth-buttons {
-            display: flex;
-            gap: 1rem;
-        }
-        
-        .btn {
-            padding: 0.6rem 1.5rem;
-            border-radius: 30px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s;
-            border: none;
-            font-size: 1rem;
-        }
-        
-        .btn-login {
-            background: transparent;
-            border: 2px solid #f9a825;
-            color: #f9a825;
-        }
-        
-        .btn-login:hover {
-            background: #f9a825;
-            color: #1a2a6c;
-        }
-        
-        .btn-register {
-            background: #f9a825;
-            color: #1a2a6c;
-        }
-        
-        .btn-register:hover {
-            background: #ffb300;
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(249, 168, 37, 0.3);
-        }
-        
-        .hero {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            text-align: center;
-            padding: 4rem 2rem;
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-        
-        .hero h1 {
-            font-size: 3.5rem;
-            margin-bottom: 1.5rem;
-            background: linear-gradient(to right, #f9a825, #ffeb3b);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            line-height: 1.2;
-        }
-        
-        .hero p {
-            font-size: 1.5rem;
-            max-width: 800px;
-            margin-bottom: 2.5rem;
-            color: #e0e0e0;
-        }
-        
-        .cta-button {
-            padding: 1rem 2.5rem;
-            font-size: 1.2rem;
-            background: linear-gradient(to right, #f9a825, #ffb300);
-            color: #1a2a6c;
-            border-radius: 50px;
-            font-weight: 700;
-            text-decoration: none;
-            transition: all 0.3s;
-            box-shadow: 0 6px 20px rgba(249, 168, 37, 0.4);
-            border: none;
-            cursor: pointer;
-        }
-        
-        .cta-button:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 12px 25px rgba(249, 168, 37, 0.5);
-        }
-        
-        .features {
-            display: flex;
-            justify-content: center;
-            gap: 2rem;
-            flex-wrap: wrap;
-            margin-top: 4rem;
-            max-width: 1200px;
-            width: 100%;
-        }
-        
-        .feature-card {
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
-            border-radius: 15px;
-            padding: 2rem;
-            width: 300px;
-            text-align: center;
-            transition: transform 0.3s;
-        }
-        
-        .feature-card:hover {
-            transform: translateY(-10px);
-            background: rgba(255, 255, 255, 0.15);
-        }
-        
-        .feature-card i {
-            font-size: 3rem;
-            color: #f9a825;
-            margin-bottom: 1.5rem;
-        }
-        
-        .feature-card h3 {
-            font-size: 1.5rem;
-            margin-bottom: 1rem;
-        }
-        
-        .feature-card p {
-            color: #ccc;
-        }
-        
-        footer {
-            background: rgba(0, 0, 0, 0.8);
-            text-align: center;
-            padding: 1.5rem;
-            margin-top: 3rem;
-        }
-        
-        @media (max-width: 768px) {
-            header {
-                flex-direction: column;
-                gap: 1rem;
-                padding: 1rem;
-            }
-            
-            nav ul {
-                gap: 1rem;
-            }
-            
-            .hero h1 {
-                font-size: 2.5rem;
-            }
-            
-            .hero p {
-                font-size: 1.2rem;
-            }
-        }
-    </style>
+    <title>Login - Crypto Tracker</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <header>
-        <div class="logo">
-            <i class="fas fa-coins"></i>
-            <span>Crypto Tracker</span>
+    <div class="container">
+        <div class="auth-box">
+            <div class="tabs">
+                <button id="login-tab" class="active">Login</button>
+                <button id="register-tab">Daftar</button>
+            </div>
+            
+            <div id="login-form" class="form active">
+                <h2>Login ke Crypto Tracker</h2>
+                <input type="email" id="login-email" placeholder="Email" required>
+                <input type="password" id="login-password" placeholder="Password" required>
+                <button id="login-btn">Login</button>
+                <div id="login-error" class="error"></div>
+            </div>
+            
+            <div id="register-form" class="form">
+                <h2>Buat Akun Baru</h2>
+                <input type="text" id="register-name" placeholder="Nama Lengkap" required>
+                <input type="email" id="register-email" placeholder="Email" required>
+                <input type="password" id="register-password" placeholder="Password (min. 6 karakter)" required>
+                <button id="register-btn">Daftar</button>
+                <div id="register-error" class="error"></div>
+            </div>
         </div>
-        <nav>
+        <div class="info">
+            <h1>Crypto Tracker</h1>
+            <p>Pantau harga XAUT-USDT secara real-time dengan analisis mendalam</p>
             <ul>
-                <li><a href="#"><i class="fas fa-home"></i> Home</a></li>
-                <li><a href="#"><i class="fas fa-chart-line"></i> Market</a></li>
-                <li><a href="#"><i class="fas fa-wallet"></i> Portfolio</a></li>
-                <li><a href="#"><i class="fas fa-newspaper"></i> News</a></li>
+                <li>Harga real-time dari CoinMarketCap</li>
+                <li>Grafik interaktif Line & Candlestick</li>
+                <li>Analisis teknikal otomatis</li>
+                <li>Data tersimpan di Firebase</li>
             </ul>
-        </nav>
-        <div class="auth-buttons">
-            <button class="btn btn-login" onclick="window.location.href='login.html'">Login</button>
-            <button class="btn btn-register" onclick="window.location.href='login.html?action=register'">Register</button>
-        </div>
-    </header>
-
-    <div class="hero">
-        <h1>Lacak Harga Kripto Secara Real-Time</h1>
-        <p>Pantau pergerakan harga XAUT/USDT dari Bitget, simpan data historis, dan analisis dengan grafik interaktif</p>
-        <button class="cta-button" onclick="window.location.href='login.html'">Mulai Sekarang</button>
-        
-        <div class="features">
-            <div class="feature-card">
-                <i class="fas fa-bolt"></i>
-                <h3>Real-Time Data</h3>
-                <p>Dapatkan update harga kripto secara real-time dari Bitget Exchange</p>
-            </div>
-            <div class="feature-card">
-                <i class="fas fa-chart-pie"></i>
-                <h3>Analisis Grafik</h3>
-                <p>Grafik interaktif untuk analisis pergerakan harga menggunakan Chart.js</p>
-            </div>
-            <div class="feature-card">
-                <i class="fas fa-database"></i>
-                <h3>Penyimpanan Aman</h3>
-                <p>Simpan data historis dengan aman menggunakan Firebase Firestore</p>
-            </div>
         </div>
     </div>
 
-    <footer>
-        <p>&copy; 2023 Crypto Tracker. Hak Cipta Dilindungi.</p>
-    </footer>
-
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore-compat.js"></script>
+    <script src="firebase.js"></script>
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const user = localStorage.getItem('crypto_user');
-            if (user) {
-                window.location.href = 'dashboard.html';
+        // DOM Elements
+        const loginTab = document.getElementById('login-tab');
+        const registerTab = document.getElementById('register-tab');
+        const loginForm = document.getElementById('login-form');
+        const registerForm = document.getElementById('register-form');
+        const loginBtn = document.getElementById('login-btn');
+        const registerBtn = document.getElementById('register-btn');
+        const loginError = document.getElementById('login-error');
+        const registerError = document.getElementById('register-error');
+
+        // Tab switching
+        loginTab.addEventListener('click', () => {
+            loginTab.classList.add('active');
+            registerTab.classList.remove('active');
+            loginForm.classList.add('active');
+            registerForm.classList.remove('active');
+        });
+
+        registerTab.addEventListener('click', () => {
+            registerTab.classList.add('active');
+            loginTab.classList.remove('active');
+            registerForm.classList.add('active');
+            loginForm.classList.remove('active');
+        });
+
+        // Login functionality
+        loginBtn.addEventListener('click', () => {
+            const email = document.getElementById('login-email').value;
+            const password = document.getElementById('login-password').value;
+            
+            firebase.auth().signInWithEmailAndPassword(email, password)
+                .then(() => {
+                    window.location.href = 'dashboard.html';
+                })
+                .catch(error => {
+                    loginError.textContent = error.message;
+                });
+        });
+
+        // Register functionality
+        registerBtn.addEventListener('click', () => {
+            const name = document.getElementById('register-name').value;
+            const email = document.getElementById('register-email').value;
+            const password = document.getElementById('register-password').value;
+            
+            if (password.length < 6) {
+                registerError.textContent = 'Password minimal 6 karakter';
+                return;
             }
+            
+            firebase.auth().createUserWithEmailAndPassword(email, password)
+                .then((userCredential) => {
+                    // Save additional user info to Firestore
+                    return firebase.firestore().collection('users').doc(userCredential.user.uid).set({
+                        name: name,
+                        email: email,
+                        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                    });
+                })
+                .then(() => {
+                    window.location.href = 'dashboard.html';
+                })
+                .catch(error => {
+                    registerError.textContent = error.message;
+                });
         });
     </script>
 </body>
