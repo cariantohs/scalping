@@ -4,406 +4,111 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard - Crypto Tracker</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+    <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/luxon@2.0.2/build/global/luxon.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-luxon@1.0.0"></script>
-    <style>
-        :root {
-            --primary: #4285f4;
-            --positive: #0ecb81;
-            --negative: #f6465d;
-            --dark: #202124;
-            --light: #f8f9fa;
-            --card-bg: #ffffff;
-            --border: #e0e0e0;
-        }
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: #f5f8fa;
-            color: var(--dark);
-            line-height: 1.6;
-        }
-        header {
-            background: white;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-            padding: 15px 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            position: sticky;
-            top: 0;
-            z-index: 100;
-        }
-        .logo {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            font-size: 1.5rem;
-            font-weight: bold;
-            color: var(--primary);
-        }
-        .user-info {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-        }
-        .avatar {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            object-fit: cover;
-            background: #f0f2f5;
-        }
-        .logout-btn {
-            background: none;
-            border: 1px solid var(--primary);
-            color: var(--primary);
-            cursor: pointer;
-            font-size: 14px;
-            padding: 6px 12px;
-            border-radius: 20px;
-            display: flex;
-            align-items: center;
-            gap: 5px;
-            transition: all 0.3s;
-        }
-        .logout-btn:hover {
-            background: var(--primary);
-            color: white;
-        }
-        .container {
-            max-width: 1200px;
-            margin: 30px auto;
-            padding: 0 20px;
-        }
-        .grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 20px;
-            margin-bottom: 20px;
-        }
-        .card {
-            background: var(--card-bg);
-            border-radius: 16px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-            padding: 25px;
-            transition: transform 0.3s;
-            border: 1px solid var(--border);
-        }
-        .card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 6px 15px rgba(0,0,0,0.08);
-        }
-        .card-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-        }
-        .card-title {
-            font-size: 1.2rem;
-            font-weight: 600;
-            color: var(--dark);
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        .price-container {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            margin: 15px 0;
-        }
-        .price-display {
-            font-size: 32px;
-            font-weight: 700;
-            color: var(--dark);
-            font-family: 'Courier New', monospace;
-        }
-        .price-change {
-            font-size: 16px;
-            padding: 6px 12px;
-            border-radius: 20px;
-            font-weight: 500;
-        }
-        .positive {
-            background: rgba(14, 203, 129, 0.15);
-            color: var(--positive);
-        }
-        .negative {
-            background: rgba(246, 70, 93, 0.15);
-            color: var(--negative);
-        }
-        .stats-container {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 15px;
-            margin: 20px 0;
-        }
-        .stat-card {
-            background: rgba(66, 133, 244, 0.05);
-            border-radius: 12px;
-            padding: 15px;
-            text-align: center;
-            border: 1px solid var(--border);
-        }
-        .stat-label {
-            font-size: 14px;
-            color: #666;
-            margin-bottom: 8px;
-        }
-        .stat-value {
-            font-size: 18px;
-            font-weight: 600;
-            font-family: 'Courier New', monospace;
-        }
-        .chart-container {
-            height: 350px;
-            margin-top: 20px;
-            position: relative;
-        }
-        .time-filters {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 15px;
-        }
-        .time-filter {
-            background: #f1f3f4;
-            border: none;
-            padding: 8px 16px;
-            border-radius: 20px;
-            cursor: pointer;
-            font-size: 14px;
-            transition: all 0.3s;
-        }
-        .time-filter.active, .time-filter:hover {
-            background: var(--primary);
-            color: white;
-        }
-        .analysis-container {
-            margin-top: 25px;
-            padding: 20px;
-            background: #f8f9fa;
-            border-radius: 12px;
-            border-left: 4px solid var(--primary);
-        }
-        .analysis-title {
-            font-weight: 600;
-            margin-bottom: 15px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            font-size: 1.1rem;
-        }
-        .last-updated {
-            color: #777;
-            font-size: 14px;
-            margin-top: 10px;
-            text-align: right;
-        }
-        #loading-indicator {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            color: var(--primary);
-            margin-top: 15px;
-            font-size: 14px;
-        }
-        .trend-indicator {
-            display: inline-flex;
-            align-items: center;
-            gap: 5px;
-            padding: 4px 8px;
-            border-radius: 4px;
-            font-size: 13px;
-            font-weight: 500;
-        }
-        .trend-up {
-            background: rgba(14, 203, 129, 0.15);
-            color: var(--positive);
-        }
-        .trend-down {
-            background: rgba(246, 70, 93, 0.15);
-            color: var(--negative);
-        }
-        .trend-neutral {
-            background: rgba(66, 133, 244, 0.15);
-            color: var(--primary);
-        }
-        #price-analysis {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 15px;
-        }
-        .analysis-item {
-            padding: 10px;
-            border-radius: 8px;
-            background: white;
-        }
-        .analysis-value {
-            font-size: 18px;
-            font-weight: 700;
-            margin: 5px 0;
-        }
-        @media (max-width: 768px) {
-            .grid {
-                grid-template-columns: 1fr;
-            }
-            .price-display {
-                font-size: 28px;
-            }
-        }
-    </style>
+    <!-- Chart.js Financial for candlestick -->
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-chart-financial@1.0.0"></script>
 </head>
 <body>
     <header>
-        <div class="logo">
-            <i class="fas fa-chart-line"></i>
-            <span>Crypto Tracker</span>
-        </div>
+        <div class="logo">Crypto Tracker</div>
         <div class="user-info">
-            <img id="user-avatar" class="avatar" src="" alt="User">
-            <button class="logout-btn" onclick="logout()">
-                <i class="fas fa-sign-out-alt"></i> Logout
-            </button>
+            <span id="username"></span>
+            <button id="logout-btn">Logout</button>
         </div>
     </header>
-
+    
     <div class="container">
-        <div class="grid">
-            <div class="card">
-                <div class="card-header">
-                    <h2 class="card-title"><i class="fas fa-coins"></i> Harga XAUT/USDT</h2>
-                    <div id="market-status" class="trend-indicator trend-neutral">Loading...</div>
-                </div>
-                
-                <div class="price-container">
-                    <div id="price-display" class="price-display">$1,850.32</div>
-                    <div id="price-change" class="price-change positive">+1.25%</div>
-                </div>
-                
-                <div class="stats-container">
-                    <div class="stat-card">
-                        <div class="stat-label">Volume 24 Jam</div>
-                        <div id="volume24h" class="stat-value">$42.8M</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-label">Perubahan 24 Jam</div>
-                        <div id="change24h" class="stat-value">+2.42%</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-label">Harga Tertinggi 24h</div>
-                        <div id="high24h" class="stat-value">$1,865.50</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-label">Harga Terendah 24h</div>
-                        <div id="low24h" class="stat-value">$1,832.10</div>
-                    </div>
-                </div>
-                
-                <div class="last-updated" id="last-updated">Terakhir update: 12:45:30</div>
-                <div id="loading-indicator" style="display: none;">
-                    <i class="fas fa-sync-alt fa-spin"></i> Memperbarui data...
-                </div>
-            </div>
-
-            <div class="card">
-                <div class="card-header">
-                    <h2 class="card-title"><i class="fas fa-chart-pie"></i> Market Overview</h2>
-                    <i class="fas fa-sync-alt" id="refresh-market" style="cursor: pointer;"></i>
-                </div>
-                
-                <div class="stats-container">
-                    <div class="stat-card">
-                        <div class="stat-label">Market Cap</div>
-                        <div class="stat-value">$3.2T</div>
-                        <div class="trend-indicator trend-up">+1.8%</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-label">Dominance BTC</div>
-                        <div class="stat-value">42.3%</div>
-                        <div class="trend-indicator trend-down">-0.4%</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-label">Fear & Greed</div>
-                        <div class="stat-value">54 (Neutral)</div>
-                        <div class="trend-indicator trend-neutral">→</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-label">Active Cryptos</div>
-                        <div class="stat-value">23,456</div>
-                        <div class="trend-indicator trend-up">+124</div>
-                    </div>
-                </div>
-                
-                <div class="analysis-container">
-                    <div class="analysis-title">
-                        <i class="fas fa-lightbulb"></i> Trading Suggestion
-                    </div>
-                    <div id="trading-suggestion">Hold position. Market is showing consolidation pattern.</div>
-                </div>
+        <div class="dashboard-header">
+            <h1>XAUT-USDT Tracker</h1>
+            <div class="price-info">
+                <div class="price" id="current-price">Loading...</div>
+                <div class="change" id="price-change">0.00%</div>
             </div>
         </div>
-
-        <div class="card">
-            <div class="card-header">
-                <h2 class="card-title"><i class="fas fa-chart-line"></i> Grafik Harga XAUT/USDT</h2>
-                <div class="time-filters">
-                    <button class="time-filter active" data-hours="24">24H</button>
-                    <button class="time-filter" data-hours="72">3D</button>
-                    <button class="time-filter" data-hours="168">7D</button>
-                    <button class="time-filter" data-hours="720">30D</button>
-                    <button class="time-filter" data-hours="2160">90D</button>
+        
+        <div class="chart-container">
+            <canvas id="price-chart"></canvas>
+        </div>
+        
+        <div class="chart-controls">
+            <button id="line-chart-btn" class="active">Line Chart</button>
+            <button id="candlestick-chart-btn">Candlestick Chart</button>
+            <select id="timeframe-select">
+                <option value="1h">1 Jam</option>
+                <option value="4h">4 Jam</option>
+                <option value="24h" selected>24 Jam</option>
+                <option value="7d">7 Hari</option>
+            </select>
+        </div>
+        
+        <div class="analysis-section">
+            <h2>Analisis Teknikal</h2>
+            <div class="analysis-grid">
+                <div class="analysis-card">
+                    <h3>Moving Average (50)</h3>
+                    <div id="ma-50">-</div>
+                    <div id="ma-50-analysis">-</div>
                 </div>
-            </div>
-            <div class="chart-container">
-                <canvas id="price-chart"></canvas>
+                <div class="analysis-card">
+                    <h3>Moving Average (200)</h3>
+                    <div id="ma-200">-</div>
+                    <div id="ma-200-analysis">-</div>
+                </div>
+                <div class="analysis-card">
+                    <h3>RSI (14)</h3>
+                    <div id="rsi">-</div>
+                    <div id="rsi-analysis">-</div>
+                </div>
+                <div class="analysis-card">
+                    <h3>Volume 24h</h3>
+                    <div id="volume">-</div>
+                    <div id="volume-analysis">-</div>
+                </div>
             </div>
             
-            <div class="analysis-container">
-                <div class="analysis-title">
-                    <i class="fas fa-chart-bar"></i> Analisis Teknikal
-                </div>
-                <div id="price-analysis">
-                    <div class="analysis-item">
-                        <div class="stat-label">Moving Average (7)</div>
-                        <div id="ma7-value" class="analysis-value">$1,842.50</div>
-                        <div class="trend-indicator trend-up">Bullish</div>
-                    </div>
-                    <div class="analysis-item">
-                        <div class="stat-label">RSI (14)</div>
-                        <div id="rsi-value" class="analysis-value">56.3</div>
-                        <div class="trend-indicator trend-neutral">Neutral</div>
-                    </div>
-                    <div class="analysis-item">
-                        <div class="stat-label">Volatility</div>
-                        <div id="volatility-value" class="analysis-value">2.8%</div>
-                        <div class="trend-indicator trend-down">Low</div>
-                    </div>
-                    <div class="analysis-item">
-                        <div class="stat-label">Support/Resistance</div>
-                        <div id="sr-value" class="analysis-value">$1,820/$1,880</div>
-                        <div class="trend-indicator trend-neutral">Key Levels</div>
-                    </div>
-                </div>
+            <div class="summary">
+                <h3>Rekomendasi Berdasarkan Analisis</h3>
+                <p id="recommendation">Sedang menganalisis data...</p>
             </div>
         </div>
     </div>
 
     <!-- Firebase SDK -->
-    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-auth-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-database-compat.js"></script>
-    
-    <!-- App Scripts -->
-    <script src="js/auth.js"></script>
-    <script src="js/db.js"></script>
-    <script src="js/chart.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore-compat.js"></script>
+    <script src="firebase.js"></script>
+    <script src="chart.js"></script>
+    <script>
+        // Logout functionality
+        document.getElementById('logout-btn').addEventListener('click', () => {
+            firebase.auth().signOut().then(() => {
+                window.location.href = 'index.html';
+            });
+        });
+
+        // Display username
+        firebase.auth().onAuthStateChanged(user => {
+            if (user) {
+                firebase.firestore().collection('users').doc(user.uid).get()
+                    .then(doc => {
+                        if (doc.exists) {
+                            document.getElementById('username').textContent = doc.data().name;
+                        } else {
+                            document.getElementById('username').textContent = user.email;
+                        }
+                    });
+            } else {
+                window.location.href = 'index.html';
+            }
+        });
+
+        // Initialize chart
+        window.addEventListener('DOMContentLoaded', () => {
+            initChart();
+        });
+    </script>
 </body>
 </html>
